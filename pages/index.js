@@ -1,3 +1,4 @@
+import React from "react";
 import config from "../config.json";
 import styled from "styled-components";
 
@@ -6,6 +7,8 @@ import Menu  from '../src/components/Menu'
 import { StyledTimeline }  from "../src/components/Timeline";
 
 function HomePage() {
+  const [valorDoFiltro, setValorDoFiltro] = React.useState("Teste");
+
   return (
     <>
       <CSSReset/>
@@ -14,9 +17,9 @@ function HomePage() {
                 flexDirection: "column",
                 flex: 1
             }}>
-        <Menu />
+        <Menu valorDoFiltro={valorDoFiltro} setValorDoFiltro={setValorDoFiltro} />
         <Header banner={config.banner}/>
-        <Timeline playlists={config.playlists} />
+        <Timeline searchValue={valorDoFiltro} playlists={config.playlists} />
         <Favorites favorites={config.favorites} />
       </div>
     </>
@@ -26,14 +29,6 @@ function HomePage() {
 export default HomePage;
 
 const StyledHeader = styled.div`
-  .banner{
-    max-height: 300px;
-    overflow: hidden;
-    img{
-      width: auto;
-      margin: -20%;
-    }
-  }
   .user-info {
     display: flex;
     align-items: center;
@@ -47,14 +42,17 @@ const StyledHeader = styled.div`
     }
   }
 `;
+const StyledBanner = styled.div`
+  height: 230px;
+  background-image: url(${({bg}) => bg});
+  background-position: center;
+`;
 
-function Header(props) {
+function Header() {
   return (
     <StyledHeader>
       <div>
-        <section className="banner">
-          <img src={props.banner} />
-        </section>
+        <StyledBanner bg={config.banner}/>
         <section className="user-info">
           <img src={`https://github.com/${config.github}.png`} />
           <div>
@@ -67,7 +65,7 @@ function Header(props) {
   );
 }
 
-function Timeline(props) {
+function Timeline({searchValue, ...props}) {
   const playlistNames = Object.keys(props.playlists);
 
   return (
@@ -79,7 +77,13 @@ function Timeline(props) {
             <section>
               <h2>{playlistName}</h2>
               <div className="playlist-section">
-                {videos.map((video) => {
+                {
+                  videos.filter((video) => {
+                    const titleNormalized = video.title.toLowerCase();
+                    const searchValueNormalized = searchValue.toLowerCase();
+
+                    return titleNormalized.includes(searchValueNormalized)
+                  }).map((video) => {
                   return (
                     <a href={video.url}>
                       <img src={video.thumb} />
@@ -125,7 +129,6 @@ const StyledFavorites = styled.div`
 `;
 
 function Favorites(props) {
-  console.log(props);
   return (
     <StyledFavorites>
       <section>
