@@ -7,7 +7,7 @@ import Menu  from '../src/components/Menu'
 import { StyledTimeline }  from "../src/components/Timeline";
 
 function HomePage() {
-  const [valorDoFiltro, setValorDoFiltro] = React.useState("Teste");
+  const [valorDoFiltro, setValorDoFiltro] = React.useState("");
 
   return (
     <>
@@ -29,6 +29,7 @@ function HomePage() {
 export default HomePage;
 
 const StyledHeader = styled.div`
+  background-color: ${({theme}) => theme.backgroundLevel1 || "#f0f0f0" };
   .user-info {
     display: flex;
     align-items: center;
@@ -74,7 +75,7 @@ function Timeline({searchValue, ...props}) {
         {playlistNames.map((playlistName) => {
           const videos = props.playlists[playlistName];
           return (
-            <section>
+            <section key={playlistName}>
               <h2>{playlistName}</h2>
               <div className="playlist-section">
                 {
@@ -85,7 +86,7 @@ function Timeline({searchValue, ...props}) {
                     return titleNormalized.includes(searchValueNormalized)
                   }).map((video) => {
                   return (
-                    <a href={video.url}>
+                    <a href={video.url} key={video.url} >
                       <img src={video.thumb} />
                       <span>{video.title}</span>
                     </a>
@@ -137,7 +138,7 @@ function Favorites(props) {
           {
             props.favorites.map((favorite) => {
               return(
-                <a href={favorite.url}>
+                <a href={favorite.url} key={favorite.name} >
                   <img src={favorite.thumbnail} />
                   <span>{favorite.name}</span>
                 </a>
@@ -145,7 +146,7 @@ function Favorites(props) {
             })
           }
         </div>
-        </section>
+      </section>
     </StyledFavorites>
   );
 }
